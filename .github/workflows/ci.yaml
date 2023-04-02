@@ -32,7 +32,7 @@ jobs:
         run: cargo install trunk
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
-      - name: Run cargo test
+      - name: Fetch external dependencies
         uses: actions-rs/cargo@v1
         with:
           command: fetch
@@ -64,7 +64,7 @@ jobs:
           command: fmt
           args: --all -- --check
 
-      - name: Build
+      - name: Trunk build
         run: trunk build --release
       - name: Prepare package
         run: cp -r assets dist/
@@ -76,11 +76,11 @@ jobs:
           files: dist
           dest: ${{ env.binary }}.zip
 
-      - name: Upload binaries to release
+      - name: Upload binaries as release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.binary }}.zip
           asset_name: ${{ env.binary }}-wasm-${{ github.run_number }}.zip
           tag: ${{ github.ref }}
-          overwrite: true``
+          overwrite: true
