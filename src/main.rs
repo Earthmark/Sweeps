@@ -1,4 +1,4 @@
-use attractor::{update_node_positions, LorenzAttractor, LorenzBundle};
+use attractor::*;
 use bevy::prelude::*;
 use rand::distributions::Uniform;
 use rand::prelude::*;
@@ -18,6 +18,33 @@ fn main() {
         .add_system(
             update_node_positions::<LorenzAttractor>.in_set(OnUpdate(GameState::Simulation)),
         )
+        .add_system(
+            update_node_positions::<ThreeCellCnnAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<AizawaAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<BoualiAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<ChenLeeAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<HalvorsenAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<FinanceAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<NewtonLeipnikAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<NoseHooverAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
+        .add_system(
+            update_node_positions::<ThomasAttractor>.in_set(OnUpdate(GameState::Simulation)),
+        )
         .run();
 }
 
@@ -31,7 +58,7 @@ enum GameState {
 fn setup(mut commands: Commands) {
     //commands.spawn(Camera2dBundle::default());
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(0.0, 0.0, -50.0).looking_at(Vec3::new(0., 0., 0.), Vec3::Y),
+        transform: Transform::from_xyz(0.0, 0.0, -20.0).looking_at(Vec3::new(0., 0., 0.), Vec3::Y),
         ..default()
     });
 }
@@ -145,16 +172,19 @@ fn setup_sim(
                 ..default()
             });
             for _ in 0..1000 {
-                parent.spawn(LorenzBundle {
-                    mesh: mesh.clone(),
-                    material: material.clone(),
-                    transform: Transform {
-                        translation: rand_v3(),
-                        scale: Vec3::splat(0.1),
+                parent.spawn((
+                    PbrBundle {
+                        mesh: mesh.clone(),
+                        material: material.clone(),
+                        transform: Transform {
+                            translation: rand_v3(),
+                            scale: Vec3::splat(0.05),
+                            ..default()
+                        },
                         ..default()
                     },
-                    ..default()
-                });
+                    ThomasAttractor::default(),
+                ));
             }
         })
         .id();
