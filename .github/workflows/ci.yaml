@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  binary: sweeps
+  CARGO_TERM_COLOR: always
+
+jobs:
+
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          lfs: 'true'
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          profile: minimal
+          components: clippy, rustfmt
+          override: true
+      - name: install trunk
+        run: cargo install trunk
+      - name: Install Dependencies
+        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: fetch
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+      - name: Run clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: -- -D warnings
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Build
+        run: trunk build --release
+      - name: Prepare package
+        run: cp -r assets dist/
+      - name: Coerce absolute paths to relative
+        run: cat ./dist/index.html | sed "s@'/@'./@g" | sed 's@"/@"./@g' > ./dist/index.html
+      - name: Package as a zip
+        uses: vimtor/action-zip@v1
+        with:
+          files: dist
+          dest: ${{ env.binary }}.zip
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.binary }}.zip
+          asset_name: ${{ env.binary }}-wasm-${{ github.run_number }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true``

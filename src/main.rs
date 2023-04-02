@@ -1,3 +1,5 @@
+#![allow(clippy::type_complexity)]
+
 use attractor::*;
 use bevy::prelude::*;
 use rand::distributions::Uniform;
@@ -102,7 +104,6 @@ fn setup_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                             font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                             font_size: 40.0,
                             color: Color::rgb(0.9, 0.9, 0.9),
-                            ..default()
                         },
                     ));
                 });
@@ -183,7 +184,7 @@ fn setup_sim(
                         },
                         ..default()
                     },
-                    ThomasAttractor::default(),
+                    ChenLeeAttractor::default(),
                 ));
             }
         })
