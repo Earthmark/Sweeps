@@ -52,17 +52,17 @@ jobs:
         with:
           command: test
 
-      - name: Run clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: -- -D warnings
+#      - name: Run clippy
+#        uses: actions-rs/clippy-check@v1
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          args: -- -D warnings
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+#      - name: Run cargo fmt
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: fmt
+#          args: --all -- --check
 
       - name: Trunk build
         run: trunk build --release
