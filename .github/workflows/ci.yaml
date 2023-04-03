@@ -80,7 +80,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.binary }}.zip
           asset_name: ${{ env.binary }}-wasm-${{ github.run_number }}.zip
-          tag: ${{ github.ref }}
+          tag: ${{ github.ref }}-${{ github.run_number }}-rel
           overwrite: true
 
       - name: Upload to itch.io
