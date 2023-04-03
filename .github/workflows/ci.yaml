@@ -3,8 +3,6 @@ name: CI
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   binary: sweeps
@@ -84,3 +82,12 @@ jobs:
           asset_name: ${{ env.binary }}-wasm-${{ github.run_number }}.zip
           tag: ${{ github.ref }}
           overwrite: true
+
+      - name: Upload to itch.io
+        uses: manleydev/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: html
+          ITCH_GAME: Sweeps
+          ITCH_USER: Earthmark
+          PACKAGE: ${{ env.binary }}.zip
