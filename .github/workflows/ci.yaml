@@ -67,7 +67,7 @@ jobs:
       - name: Prepare package
         run: cp -r assets dist/
       - name: Coerce absolute paths to relative
-        run: cat ./dist/index.html | sed "s@'/@'./@g" | sed 's@"/@"./@g' > ./dist/index.html
+        run: sed "s@'/@'./@g" ./dist/index.html | sed 's@"/@"./@g' > ./dist/_index.html  && mv ./dist/_index.html ./dist/index.html
       - name: Package as a zip
         uses: vimtor/action-zip@v1
         with:
